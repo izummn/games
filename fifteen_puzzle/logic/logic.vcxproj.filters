@@ -15,7 +15,7 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="logic.cpp">
+    <ClCompile Include="logic.h">
       <Filter>Заголовочные файлы</Filter>
     </ClCompile>
   </ItemGroup>

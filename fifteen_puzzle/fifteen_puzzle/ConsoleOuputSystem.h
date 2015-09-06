@@ -1,116 +1,55 @@
 #include <iostream>
-#include <string>
-#include <cstring>
+#include "logic.h"
 #include <stdio.h>
 #include <stdlib.h>
+#include <conio.h>
 
 using namespace std;
 
 class ConsoleOuputSystem
 {
 private:
-	int arr[4][4];
-	int curr;
+	Logic lgc;
 public:
 	ConsoleOuputSystem()
 	{
-		int n(1);
-		for (int i(0); i < 4; i++)
-			for (int j(0); j < 4; j++)
-			{
-				arr[i][j] = n;
-				n++;
-			}
-		arr[3][3] = 0;
-		curr = 0;
-	}
-	//~Interface(){};
+		Logic obj;
+		lgc = obj;
+	};
+	~ConsoleOuputSystem(){};
 
-	bool setValue(const char v_action)
+	void start()
 	{
-		for (int i(0); i < 4; i++)
-			for (int j(0); j < 4; j++)
-				if (arr[i][j] == curr)
+		cout << *this;
+		char input;
 
-				{
-
-			switch (v_action)
-			{
-			case 'w':		//up
-			{
-				if (i > 0)
-					curr = arr[i - 1][j];
-				return true;
-			}
-				break;
-
-			case 'a':		//left
-			{
-				if (j > 0)
-					curr = arr[i][j - 1];
-				return true;
-			}
-				break;
-
-			case 's':		//down
-			{
-				if (i < 3)
-					curr = arr[i + 1][j];
-				return true;
-			}
-				break;
-
-			case 'd':		//right
-			{
-				if (j < 3)
-					curr = arr[i][j + 1];
-				return true;
-			}
-				break;
-
-			case 'r':		//SET
-			{
-				if ((arr[i - 1][j] == 0) && (i > 0)) swap(arr[i][j], arr[i - 1][j]);
-				if ((arr[i + 1][j] == 0) && (i < 3)) swap(arr[i][j], arr[i + 1][j]);
-				if ((arr[i][j - 1] == 0) && (j > 0)) swap(arr[i][j], arr[i][j - 1]);
-				if ((arr[i][j + 1] == 0) && (j < 3)) swap(arr[i][j], arr[i][j + 1]);
-				return true;
-			}
-				break;
-			}
-				}
-		return true;
+		do{
+			cout << endl;
+			input = _getch();
+			//input = stdin.get();
+			//system("cls");
+			lgc.setValue(input);
+			cout << *this;
+		} while (input != 'q');
 	};
 
-	friend ostream& operator<<(ostream &os, const ConsoleOuputSystem &obj)
+
+	friend ostream& operator<<(ostream &os, ConsoleOuputSystem &obj)
 	{
 		for (int i(0); i < 4; i++)
 		{
 			os << endl;
 			for (int j(0); j < 4; j++)
 			{
-				if (obj.arr[i][j] == obj.curr)
-				{
-					os << "[";
-					os.width(2);
-					if (obj.arr[i][j] == 0)
-						os << "  ]";
-					else
-						os << obj.arr[i][j] << "]";
-				}
+				os.width(4);
+				if (obj.lgc.getArr(i,j) == 0)
+					os << "   ";
 				else
-				{
-					os.width(4);
-					if (obj.arr[i][j] == 0)
-						os << "  ";
-					else 
-						os << obj.arr[i][j];
-				}
+					os << obj.lgc.getArr(i, j);
 			}
 		}
 		return os;
 	}
-
 
 };
 

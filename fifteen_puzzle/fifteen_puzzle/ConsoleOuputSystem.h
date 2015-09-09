@@ -11,31 +11,51 @@ class ConsoleOuputSystem
 private:
 	Logic lgc;
 public:
-	ConsoleOuputSystem()
-	{
-		Logic obj;
-		lgc = obj;
-	};
-	~ConsoleOuputSystem(){};
+	ConsoleOuputSystem(){}
+	~ConsoleOuputSystem(){}
 
 	void start()
 	{
-		cout << *this;
 		char input;
+		cout << " ***** Fifteen puzzle ***** " << endl;
+		cout << " To start game press <n> key. " << endl;
+		cout << " To exit from game press <q> key. " << endl;
+		cout << " To restart game press <r> key. " << endl;
+		cin >> input;
 
-		do{
-			cout << endl;
+		while (checkInput(input))
+		{
+			system("cls");
+			cout << *this << endl;
 			input = _getch();
-			//input = stdin.get();
-			//system("cls");
-			lgc.setValue(input);
-			cout << *this;
-		} while (input != 'q');
-	};
 
+			if (lgc.winCheck())
+			{
+				cout << " You win! " << endl;
+				break;
+			}		
+		}
+	}
+
+	bool checkInput(char p)
+	{
+		switch (p)
+		{
+		case 'w':   lgc.setValue(MOVE_UP);  break;
+		case 's':   lgc.setValue(MOVE_DOWN);  break;
+		case 'a':   lgc.setValue(MOVE_LEFT);  break;
+		case 'd':   lgc.setValue(MOVE_RIGHT);  break;
+		case 'n':   lgc.mixPuzzle(); break;
+		case 'q':  return false; break;
+		case 'r':  /* to do */   break;
+		}
+			//cout << " Error! Try again! " << endl;
+			return true; 
+	}
 
 	friend ostream& operator<<(ostream &os, ConsoleOuputSystem &obj)
 	{
+		
 		for (int i(0); i < 4; i++)
 		{
 			os << endl;

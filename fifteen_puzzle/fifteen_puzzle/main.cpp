@@ -8,8 +8,9 @@ using namespace std;
 
 int main()
 {
-	ConsoleOuputSystem A;
-	A.start();
+	ConsoleOuputSystem* A = new ConsoleOuputSystem[1];
+	A->start();
+	delete[] A;
 	return 0;
 }
 

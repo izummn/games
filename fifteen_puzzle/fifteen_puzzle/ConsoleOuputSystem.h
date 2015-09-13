@@ -10,7 +10,7 @@ class ConsoleOuputSystem
 {
 private:
 	Logic lgc;
-	Logic temp;
+
 public:
 	ConsoleOuputSystem(){}
 	~ConsoleOuputSystem(){}
@@ -45,24 +45,15 @@ public:
 		case 's':   { lgc.setValue(MOVE_DOWN); return true; }  break;
 		case 'a':   { lgc.setValue(MOVE_LEFT); return true; }  break;
 		case 'd':   { lgc.setValue(MOVE_RIGHT); return true; } break;
-		case 'n':   { newGame(); return true; } break;
-		case 'r':   { resetPuzzle(); return true; }  break;
+		case 'n':   { lgc.newGame(); return true; } break;
+		case 'r':   { lgc.resetPuzzle(); return true; }  break;
 		case 'q':	return false; break;
 		}
 		cout << " Error! Try again! " << endl;
 		return true; 
 	}
 
-	void newGame()
-	{
-		lgc.mixPuzzle();
-		temp = lgc;
-	}
-
-	void resetPuzzle()
-	{
-		lgc = temp;
-	}
+	
 
 	friend ostream& operator<<(ostream &os, ConsoleOuputSystem &obj)
 	{

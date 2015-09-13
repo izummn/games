@@ -1,15 +1,15 @@
 #include <iostream>
 #include "ConsoleOuputSystem.h"
-#include <conio.h>
-#include <stdio.h>
-#include <stdlib.h>
+#include <curses.h>
 
 using namespace std;
 
 int main()
 {
-	ConsoleOuputSystem* A = new ConsoleOuputSystem[1];
-	A->start();
+	//initscr();
+	ConsoleOuputSystem* A = new ConsoleOuputSystem[2];
+	A[0].start();
+	//A[1].start();
 	delete[] A;
 	return 0;
 }

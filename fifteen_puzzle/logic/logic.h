@@ -12,27 +12,34 @@ class Logic
 {
 private:
 	int arr[pSize][pSize];
-//	int** arr;
+	int temp[pSize][pSize];
+	//int** arr;
 
 public:
 	Logic()
 	{
-	//	int **arr = new int*[pSize];
-	//		for (int i(0); i < pSize; i++)
-	//			arr[i] = new int[pSize];
+		/*int **arr = new int*[pSize];
+			for (int i(0); i < pSize; i++)
+				arr[i] = new int[pSize];*/
 
 		int n(1);
 		for (int i(0); i < pSize; i++)
 			for (int j(0); j < pSize; j++)
 			{
-			arr[i][j] = n;
-			n++;
+				arr[i][j] = n;
+				temp[i][j] = n;
+				n++;
 			}
 		arr[pSize-1][pSize-1] = 0;
+		temp[pSize - 1][pSize - 1] = 0;
 	}
 
 	Logic(const Logic &obj)
 	{
+	/*	int **arr = new int*[pSize];
+		for (int i(0); i < pSize; i++)
+			arr[i] = new int[pSize];*/
+
 		for (int i(0); i < pSize; i++)
 			for (int j(0); j < pSize; j++)
 			arr[i][j] = obj.arr[i][j];
@@ -40,9 +47,10 @@ public:
 
 	~Logic()
 	{
-	//    for (int i(0); i < pSize; i++)
-	//		delete[] arr[i];
-	//	  delete[] arr;
+	 /*  for (int i(0); i < pSize; i++)
+			delete[] arr[i];
+		  delete[] arr;
+		  */
 	};
 
 	int getArr(int v_i, int v_j) const
@@ -104,15 +112,21 @@ public:
 		return true;
 	}
 
-	Logic operator=(const Logic& obj)
+
+	Logic& operator=(const Logic& obj)
 	{
+		/*int **arr = new int*[pSize];
+		for (int i(0); i < pSize; i++)
+			arr[i] = new int[pSize];
+			*/
+
 		for (int i(0); i < pSize; i++)
 			for (int j(0); j < pSize; j++)
 				arr[i][j] = obj.arr[i][j];
 		return *this;
 	}
 
-	bool winCheck() 
+	bool winCheck() const
 	{
 		Logic l;
 		return (*this) == l;
@@ -122,18 +136,24 @@ public:
 	{
 		std::vector<int> p(pSize*pSize);
 		int e(0);
-			for (int i(0); i < pSize*pSize; i++)
-				p[i] = i;
-			std::srand(unsigned(std::time(0)));
-			random_shuffle(p.begin(), p.end());
+		for (int i(0); i < pSize*pSize; i++)
+			p[i] = i;
+		std::srand(unsigned(std::time(0)));
+		random_shuffle(p.begin(), p.end());
 
-			for (int i(0); i < pSize*pSize; i++)
-				if (p[i] == 0) e = i / pSize + 1;
-
-			if (checkSolution(p, e))
-				swap(p[pSize*pSize - 1], p[pSize*pSize - 2]);
+		for (int i(0); i < pSize*pSize; i++)
+			if (p[i] == 0) e = i / pSize + 1;
+				
+		if (hasNoSolution(p, e))
+		{
+			Logic sw = *this;
+			for (int i(0); i < pSize; i++)
+				for (int j(0); j < pSize; j++)
+					arr[j][pSize - 1 - i] = sw.arr[i][j];
+		}
 
 		int n(0);
+
 		for (int i(0); i < pSize; i++)
 			for (int j(0); j < pSize; j++)
 			{
@@ -142,7 +162,7 @@ public:
 			}
 	}
 
-	static bool checkSolution(const std::vector<int> &p, int e)
+	static bool hasNoSolution(const std::vector<int> &p, int e)
 	{
 		int t(0), sum(e);
 		for (int i(1); i < pSize*pSize; i++)
@@ -152,7 +172,23 @@ public:
 			sum += t;
 			t = 0;
 		}
-		return (sum % 2);
+		if (sum % 2 == 0) return false;
+		else return true;
+	}
+
+	void newGame()
+	{
+		mixPuzzle();
+		for (int i(0); i < pSize; i++)
+			for (int j(0); j < pSize; j++)
+				temp[i][j] = arr[i][j];
+	}
+
+	void resetPuzzle()
+	{
+		for (int i(0); i < pSize; i++)
+			for (int j(0); j < pSize; j++)
+				arr[i][j] = temp[i][j];
 	}
 
 };

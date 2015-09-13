@@ -6,34 +6,54 @@
 using namespace std;
 
 enum action{ MOVE_UP, MOVE_DOWN, MOVE_LEFT, MOVE_RIGHT };
-
+const int pSize = 4;
 
 class Logic
 {
 private:
-	int arr[4][4];
-	
+	int arr[pSize][pSize];
+//	int** arr;
+
 public:
 	Logic()
 	{
+	//	int **arr = new int*[pSize];
+	//		for (int i(0); i < pSize; i++)
+	//			arr[i] = new int[pSize];
+
 		int n(1);
-		for (int i(0); i < 4; i++)
-			for (int j(0); j < 4; j++)
+		for (int i(0); i < pSize; i++)
+			for (int j(0); j < pSize; j++)
 			{
 			arr[i][j] = n;
 			n++;
 			}
-		arr[3][3] = 0;
+		arr[pSize-1][pSize-1] = 0;
 	}
-	~Logic(){};
-	int getArr(int v_i, int v_j)
+
+	Logic(const Logic &obj)
+	{
+		for (int i(0); i < pSize; i++)
+			for (int j(0); j < pSize; j++)
+			arr[i][j] = obj.arr[i][j];
+	}
+
+	~Logic()
+	{
+	//    for (int i(0); i < pSize; i++)
+	//		delete[] arr[i];
+	//	  delete[] arr;
+	};
+
+	int getArr(int v_i, int v_j) const
 	{
 		return arr[v_i][v_j];
 	}
-	void setValue(const char v_action)
+
+	void setValue(const action v_action)
 	{
-		for (int i(0); i < 4; i++)
-			for (int j(0); j < 4; j++)
+		for (int i(0); i < pSize; i++)
+			for (int j(0); j < pSize; j++)
 				if (arr[i][j] == 0)
 
 				{
@@ -59,7 +79,7 @@ public:
 
 			case MOVE_UP:		
 			{
-				if (i < 3)
+				if (i < (pSize-1))
 					swap(arr[i][j], arr[i + 1][j]);
 				return;
 			}
@@ -67,7 +87,7 @@ public:
 
 			case MOVE_LEFT:		
 			{
-				if (j < 3)
+				if (j < (pSize-1))
 					swap(arr[i][j], arr[i][j + 1]);
 				return;
 			}
@@ -75,57 +95,64 @@ public:
 			}
 				}
 	};
-	bool operator==(const Logic &l)
+
+	bool operator==(const Logic &l) const
 	{
-		int n(1);
-		for (int i(0); i < 4; i++)
-			for (int j(0); j < 4; j++)
-			{
-			if (arr[i][j] != n) return false;
-			n++;
-			if (n == 16) n = 0;
-			}
+		for (int i(0); i < pSize; i++)
+			for (int j(0); j < pSize; j++)
+			if (arr[i][j] != l.arr[i][j]) return false;
 		return true;
 	}
-	bool winCheck()
+
+	Logic operator=(const Logic& obj)
+	{
+		for (int i(0); i < pSize; i++)
+			for (int j(0); j < pSize; j++)
+				arr[i][j] = obj.arr[i][j];
+		return *this;
+	}
+
+	bool winCheck() 
 	{
 		Logic l;
 		return (*this) == l;
 	}
+
 	void mixPuzzle()
 	{
-		std::vector<int> p;
+		std::vector<int> p(pSize*pSize);
 		int e(0);
-		do {
-			p.clear();
-			for (int i(0); i < 16; i++)
-				p.push_back(i);
+			for (int i(0); i < pSize*pSize; i++)
+				p[i] = i;
 			std::srand(unsigned(std::time(0)));
 			random_shuffle(p.begin(), p.end());
 
-			for (int i(0); i < 16; i++)
-				if (p[i] == 0) e = i / 4 + 1;
-		} while (checkSolution(p, e));
+			for (int i(0); i < pSize*pSize; i++)
+				if (p[i] == 0) e = i / pSize + 1;
+
+			if (checkSolution(p, e))
+				swap(p[pSize*pSize - 1], p[pSize*pSize - 2]);
 
 		int n(0);
-		for (int i(0); i < 4; i++)
-			for (int j(0); j < 4; j++)
+		for (int i(0); i < pSize; i++)
+			for (int j(0); j < pSize; j++)
 			{
 				arr[i][j] = p[n];
 				n++;
 			}
 	}
-	bool checkSolution(std::vector<int> &p, int &e)
+
+	static bool checkSolution(const std::vector<int> &p, int e)
 	{
 		int t(0), sum(e);
-		for (int i(1); i < 16; i++)
+		for (int i(1); i < pSize*pSize; i++)
 		{
-			for (int j(i); j < 16; j++)
+			for (int j(i); j < pSize*pSize; j++)
 				if (p[i] < p[j]) t++;
 			sum += t;
 			t = 0;
 		}
-		return !(sum % 2);
+		return (sum % 2);
 	}
 
 };

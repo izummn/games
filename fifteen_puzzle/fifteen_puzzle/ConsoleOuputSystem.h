@@ -10,6 +10,7 @@ class ConsoleOuputSystem
 {
 private:
 	Logic lgc;
+	Logic temp;
 public:
 	ConsoleOuputSystem(){}
 	~ConsoleOuputSystem(){}
@@ -25,41 +26,51 @@ public:
 
 		while (checkInput(input))
 		{
-			system("cls");
-			cout << *this << endl;
-			input = _getch();
-
 			if (lgc.winCheck())
 			{
 				cout << " You win! " << endl;
 				break;
-			}		
+			}
+			cout << *this << endl;
+			input = _getch();
 		}
 	}
 
 	bool checkInput(char p)
 	{
+		system("cls");
 		switch (p)
 		{
-		case 'w':   lgc.setValue(MOVE_UP);  break;
-		case 's':   lgc.setValue(MOVE_DOWN);  break;
-		case 'a':   lgc.setValue(MOVE_LEFT);  break;
-		case 'd':   lgc.setValue(MOVE_RIGHT);  break;
-		case 'n':   lgc.mixPuzzle(); break;
-		case 'q':  return false; break;
-		case 'r':  /* to do */   break;
+		case 'w':   { lgc.setValue(MOVE_UP); return true; }  break;
+		case 's':   { lgc.setValue(MOVE_DOWN); return true; }  break;
+		case 'a':   { lgc.setValue(MOVE_LEFT); return true; }  break;
+		case 'd':   { lgc.setValue(MOVE_RIGHT); return true; } break;
+		case 'n':   { newGame(); return true; } break;
+		case 'r':   { resetPuzzle(); return true; }  break;
+		case 'q':	return false; break;
 		}
-			//cout << " Error! Try again! " << endl;
-			return true; 
+		cout << " Error! Try again! " << endl;
+		return true; 
+	}
+
+	void newGame()
+	{
+		lgc.mixPuzzle();
+		temp = lgc;
+	}
+
+	void resetPuzzle()
+	{
+		lgc = temp;
 	}
 
 	friend ostream& operator<<(ostream &os, ConsoleOuputSystem &obj)
 	{
 		
-		for (int i(0); i < 4; i++)
+		for (int i(0); i < pSize; i++)
 		{
 			os << endl;
-			for (int j(0); j < 4; j++)
+			for (int j(0); j < pSize; j++)
 			{
 				os.width(4);
 				if (obj.lgc.getArr(i,j) == 0)

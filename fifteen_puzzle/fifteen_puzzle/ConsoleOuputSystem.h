@@ -1,7 +1,6 @@
+#pragma once
 #include <iostream>
 #include "logic.h"
-#include <stdio.h>
-#include <stdlib.h>
 #include <conio.h>
 
 using namespace std;
@@ -53,22 +52,20 @@ public:
 		return true; 
 	}
 
-	
 
 	friend ostream& operator<<(ostream &os, ConsoleOuputSystem &obj)
 	{
 		
-		for (int i(0); i < pSize; i++)
+		for (int i(0); i < obj.lgc.getPsize()*obj.lgc.getPsize(); i++)
 		{
+			if (i % obj.lgc.getPsize() == 0)
 			os << endl;
-			for (int j(0); j < pSize; j++)
-			{
-				os.width(4);
-				if (obj.lgc.getArr(i,j) == 0)
+			os.width(4);
+			if (obj.lgc.getArr(i) == 0)
 					os << "   ";
 				else
-					os << obj.lgc.getArr(i, j);
-			}
+					os << obj.lgc.getArr(i);
+			
 		}
 		return os;
 	}

@@ -1,3 +1,4 @@
+#pragma once
 #include <iostream>
 #include <algorithm>    // std::random_shuffle
 #include <ctime>        // std::time
@@ -6,63 +7,47 @@
 using namespace std;
 
 enum action{ MOVE_UP, MOVE_DOWN, MOVE_LEFT, MOVE_RIGHT };
-const int pSize = 4;
+
 
 class Logic
 {
 private:
-	int arr[pSize][pSize];
-	int temp[pSize][pSize];
-	//int** arr;
-
+	const int pSize;
+	std::vector<int> arr;
+	std::vector<int> temp;
 public:
-	Logic()
+	Logic():pSize(4)
 	{
-		/*int **arr = new int*[pSize];
-			for (int i(0); i < pSize; i++)
-				arr[i] = new int[pSize];*/
-
 		int n(1);
-		for (int i(0); i < pSize; i++)
-			for (int j(0); j < pSize; j++)
-			{
-				arr[i][j] = n;
-				temp[i][j] = n;
-				n++;
-			}
-		arr[pSize-1][pSize-1] = 0;
-		temp[pSize - 1][pSize - 1] = 0;
+		for (int i(0); i < pSize*pSize; i++)
+		{
+			arr.push_back(n);
+			temp.push_back(n);
+			n++;
+		}
+		arr[pSize*pSize-1]= 0;
+		temp[pSize*pSize - 1] = 0;
 	}
+	int getPsize() { return pSize; }
 
-	Logic(const Logic &obj)
+	Logic(const Logic &obj) :pSize(4)
 	{
-	/*	int **arr = new int*[pSize];
-		for (int i(0); i < pSize; i++)
-			arr[i] = new int[pSize];*/
-
-		for (int i(0); i < pSize; i++)
-			for (int j(0); j < pSize; j++)
-			arr[i][j] = obj.arr[i][j];
+			arr = obj.arr;
+			temp = obj.temp;
 	}
 
 	~Logic()
-	{
-	 /*  for (int i(0); i < pSize; i++)
-			delete[] arr[i];
-		  delete[] arr;
-		  */
-	};
+	{};
 
-	int getArr(int v_i, int v_j) const
+	int getArr(int v_i) const
 	{
-		return arr[v_i][v_j];
+		return arr[v_i];
 	}
 
 	void setValue(const action v_action)
 	{
-		for (int i(0); i < pSize; i++)
-			for (int j(0); j < pSize; j++)
-				if (arr[i][j] == 0)
+		for (int i(0); i < pSize*pSize; i++)
+				if (arr[i] == 0)
 
 				{
 
@@ -70,16 +55,16 @@ public:
 			{
 			case MOVE_DOWN:		
 			{
-				if (i > 0)
-					swap(arr[i][j], arr[i - 1][j]);
+				if (i >= pSize)
+					swap(arr[i], arr[i - pSize]);
 				return;
 			}
 				break;
 
-			case MOVE_RIGHT:		
+			case MOVE_LEFT:		
 			{
-				if (j > 0)
-					swap(arr[i][j], arr[i][j - 1]);
+				if (i%pSize != pSize-1)
+					swap(arr[i], arr[i + 1]);
 
 				return;
 			}
@@ -87,16 +72,16 @@ public:
 
 			case MOVE_UP:		
 			{
-				if (i < (pSize-1))
-					swap(arr[i][j], arr[i + 1][j]);
+				if (i <  pSize*pSize - pSize)
+					swap(arr[i], arr[i + pSize]);
 				return;
 			}
 				break;
 
-			case MOVE_LEFT:		
+			case MOVE_RIGHT:
 			{
-				if (j < (pSize-1))
-					swap(arr[i][j], arr[i][j + 1]);
+				if (i%pSize != 0)
+					swap(arr[i], arr[i - 1]);
 				return;
 			}
 				break;
@@ -106,24 +91,9 @@ public:
 
 	bool operator==(const Logic &l) const
 	{
-		for (int i(0); i < pSize; i++)
-			for (int j(0); j < pSize; j++)
-			if (arr[i][j] != l.arr[i][j]) return false;
+		for (int i(0); i < pSize*pSize; i++)
+			if (arr[i] != l.arr[i]) return false;
 		return true;
-	}
-
-
-	Logic& operator=(const Logic& obj)
-	{
-		/*int **arr = new int*[pSize];
-		for (int i(0); i < pSize; i++)
-			arr[i] = new int[pSize];
-			*/
-
-		for (int i(0); i < pSize; i++)
-			for (int j(0); j < pSize; j++)
-				arr[i][j] = obj.arr[i][j];
-		return *this;
 	}
 
 	bool winCheck() const
@@ -134,41 +104,26 @@ public:
 
 	void mixPuzzle()
 	{
-		std::vector<int> p(pSize*pSize);
 		int e(0);
-		for (int i(0); i < pSize*pSize; i++)
-			p[i] = i;
-		std::srand(unsigned(std::time(0)));
-		random_shuffle(p.begin(), p.end());
+			for (int i(0); i < pSize*pSize; i++)
+				arr[i] = i;
+			std::srand(unsigned(std::time(0)));
+			random_shuffle(arr.begin(), arr.end());
 
-		for (int i(0); i < pSize*pSize; i++)
-			if (p[i] == 0) e = i / pSize + 1;
-				
-		if (hasNoSolution(p, e))
-		{
-			Logic sw = *this;
-			for (int i(0); i < pSize; i++)
-				for (int j(0); j < pSize; j++)
-					arr[j][pSize - 1 - i] = sw.arr[i][j];
-		}
+			for (int i(0); i < pSize*pSize; i++)
+				if (arr[i] == 0) e = i / pSize + 1;
 
-		int n(0);
-
-		for (int i(0); i < pSize; i++)
-			for (int j(0); j < pSize; j++)
-			{
-				arr[i][j] = p[n];
-				n++;
-			}
+			if (hasNoSolution(e))
+				swap(arr[pSize*pSize - 1], arr[pSize*pSize - 2]);
 	}
 
-	static bool hasNoSolution(const std::vector<int> &p, int e)
+	 bool hasNoSolution(int e) const
 	{
 		int t(0), sum(e);
 		for (int i(1); i < pSize*pSize; i++)
 		{
 			for (int j(i); j < pSize*pSize; j++)
-				if (p[i] < p[j]) t++;
+				if (arr[i] < arr[j]) t++;
 			sum += t;
 			t = 0;
 		}
@@ -179,16 +134,12 @@ public:
 	void newGame()
 	{
 		mixPuzzle();
-		for (int i(0); i < pSize; i++)
-			for (int j(0); j < pSize; j++)
-				temp[i][j] = arr[i][j];
+		temp = arr;
 	}
 
 	void resetPuzzle()
 	{
-		for (int i(0); i < pSize; i++)
-			for (int j(0); j < pSize; j++)
-				arr[i][j] = temp[i][j];
+		arr = temp;
 	}
-
+	
 };

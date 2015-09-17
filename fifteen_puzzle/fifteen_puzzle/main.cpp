@@ -1,15 +1,17 @@
+#pragma once
 #include <iostream>
 #include "ConsoleOuputSystem.h"
-#include <curses.h>
+#include "nCursesOutput.h"
+#include <conio.h>
+
 
 using namespace std;
 
 int main()
 {
-	//initscr();
-	ConsoleOuputSystem* A = new ConsoleOuputSystem[2];
-	A[0].start();
-	//A[1].start();
+	//ConsoleOuputSystem* A = new ConsoleOuputSystem[1];
+	nCursesOutput* A = new nCursesOutput[1];
+	A->start();
 	delete[] A;
 	return 0;
 }

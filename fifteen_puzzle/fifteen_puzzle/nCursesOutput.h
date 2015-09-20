@@ -1,7 +1,5 @@
-#pragma once
 #include <iostream>
 #include "logic.h"
-#include <conio.h>
 #include "curses.h"
 #include <string>
 
@@ -13,66 +11,73 @@ private:
 	Logic lgc;
 
 public:
-	nCursesOutput(){ initscr(); }
-	~nCursesOutput(){ endwin(); }
+	nCursesOutput()
+	{ 
+		initscr(); 
+		keypad(stdscr, true);
+	}
+	~nCursesOutput()
+	{
+		keypad(stdscr, false);
+		endwin(); 
+	}
 
 	void start()
-	{
-		
-		char input;
+	{	
+		int input;
 		printw(" ***** Fifteen puzzle ***** \n");
 		printw(" To start game press <n> key. \n");
 		printw(" To exit from game press <q> key. \n");
 		printw(" To restart game press <r> key. \n");
 		refresh();
-		input = getch();
-
-		while (checkInput(input))
+		lgc.newGame();
+		while (checkInput(getch()))
 		{
 			if (lgc.winCheck())
 			{
 				printw(" You win! \n");
-				break;
+				printw(" To start new game press <n> key. \n");
+				printw(" To exit from game press <q> key. \n");
+				refresh();
 			}
-			show();
-			input = getch();
+			else
+			show();	
 		}
 		
 	}
 
-	bool checkInput(char p)
+	bool checkInput(int p)
 	{
 		clear();
-		refresh();
 		switch (p)
 		{
-		case 'w':   { lgc.setValue(MOVE_UP); return true; }  break;
-		case 's':   { lgc.setValue(MOVE_DOWN); return true; }  break;
-		case 'a':   { lgc.setValue(MOVE_LEFT); return true; }  break;
-		case 'd':   { lgc.setValue(MOVE_RIGHT); return true; } break;
-		case 'n':   { lgc.newGame(); return true; } break;
-		case 'r':   { lgc.resetPuzzle(); return true; }  break;
-		case 'q':	return false; break;
+		case static_cast<int>('w'):   { lgc.setValue(MOVE_UP); return true; }  break;
+		case static_cast<int>('s'):   { lgc.setValue(MOVE_DOWN); return true; }  break;
+		case static_cast<int>('a'):   { lgc.setValue(MOVE_LEFT); return true; }  break;
+		case static_cast<int>('d'):   { lgc.setValue(MOVE_RIGHT); return true; } break;
+		case static_cast<int>('n'):   { lgc.newGame(); return true; } break;
+		case static_cast<int>('r'):   { lgc.resetPuzzle(); return true; }  break;
+		case static_cast<int>('q'): 	return false; break;
+
+		case KEY_UP:     { lgc.setValue(MOVE_UP); return true; }  break;
+		case KEY_DOWN:   { lgc.setValue(MOVE_DOWN); return true; }  break;
+		case KEY_LEFT:   { lgc.setValue(MOVE_LEFT); return true; }  break;
+		case KEY_RIGHT:  { lgc.setValue(MOVE_RIGHT); return true; } break;
 		}
 		printw(" Error! Try again! ");
 		return true;
 	}
 
-
 	void show()
 	{
-		char s[10];
-		for (int i(0); i < lgc.getPsize()*lgc.getPsize(); i++)
+		for (int i(0); i < lgc.getPsize(); i++)
 		{
-			if (i % lgc.getPsize() == 0)
-				printw("\n");
-			if (lgc.getArr(i) == 0)
-				printw("   ");
-			else
-			{
-				_itoa_s(lgc.getArr(i), s, 10);
-				printw("%3s",s);
-			}
+			printw("\n");
+			for (int j(0); j < lgc.getPsize(); j++)
+				if (lgc.getArr(i, j) == 0)
+					printw("   ");
+				else
+					printw("%3d", lgc.getArr(i, j));		
 		}
 	}
 

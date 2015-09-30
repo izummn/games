@@ -5,6 +5,7 @@
 #include <cstdlib> 
 #include <vector>
 #include <numeric>
+
 using namespace std;
 
 enum action{ MOVE_UP, MOVE_DOWN, MOVE_LEFT, MOVE_RIGHT };
@@ -18,17 +19,11 @@ private:
 	std::vector<int> temp;
 
 public:
-	Logic():pSize(3)
+	Logic() :pSize(3), arr(pSize*pSize), temp(pSize*pSize)
 	{
-		int n(1);
-		for (int i(0); i < pSize*pSize; i++)
-		{
-			arr.push_back(n);
-			temp.push_back(n);
-			n++;
-		}
+		iota(arr.begin(), arr.end(), 1);
 		arr[pSize*pSize-1]= 0;
-		temp[pSize*pSize - 1] = 0;
+		temp = arr;
 	}
 
 	int getPsize() const { return pSize; }
@@ -109,8 +104,7 @@ public:
 
 	void mixPuzzle()
 	{
-			for (int i(0); i < pSize*pSize; i++)
-				arr[i] = i;
+			iota(arr.begin(), arr.end(), 0);
 			std::srand(unsigned(std::time(0)));
 			random_shuffle(arr.begin(), arr.end());
 
@@ -144,3 +138,5 @@ public:
 	}
 	
 };
+
+

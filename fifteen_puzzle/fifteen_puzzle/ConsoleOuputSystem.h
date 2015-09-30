@@ -1,4 +1,3 @@
-#pragma once
 #include <iostream>
 #include "logic.h"
 #include <conio.h>
@@ -14,7 +13,7 @@ public:
 	ConsoleOuputSystem(){}
 	~ConsoleOuputSystem(){}
 
-	void start()
+	void run()
 	{
 		char input;
 		cout << " ***** Fifteen puzzle ***** " << endl;

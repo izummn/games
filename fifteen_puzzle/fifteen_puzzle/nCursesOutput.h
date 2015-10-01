@@ -19,7 +19,6 @@ public:
 	}
 	~nCursesOutput()
 	{
-		//keypad(stdscr, false);
 		endwin(); 
 	}
 

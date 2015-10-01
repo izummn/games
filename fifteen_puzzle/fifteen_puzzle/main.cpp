@@ -6,19 +6,37 @@
 
 using namespace std;
 
-int main()
+int main(int argc, char *argv[])
 {
-	//ConsoleOuputSystem* A = new ConsoleOuputSystem[1];
-	nCursesOutput* A = new nCursesOutput[1];
-	try
+	if (argc < 2)
 	{
-		A->run();
+		std::cout << "Enter mode!" << std::endl;
+		exit(1);
 	}
-	catch (std::exception& UnknownKey)
+
+	string mode(argv[1]);
+
+try
+{
+
+	if (mode == "-ui=console")
 	{
-		cout << "Error key! " << endl;
-	};
-	delete[] A;
+		ConsoleOuputSystem* A = new ConsoleOuputSystem[1];
+		A->run();
+		delete[] A;
+	}
+	else
+	{
+		nCursesOutput* A = new nCursesOutput[1];
+		A->run();
+		delete[] A;
+	}		
+}
+catch (std::exception& UnknownKey)
+{
+	cout << "Error key! " << endl;
+};
+	
 	return 0;
 }
 

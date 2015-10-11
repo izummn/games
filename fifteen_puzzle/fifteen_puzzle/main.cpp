@@ -1,10 +1,24 @@
 #include <iostream>
 #include "ConsoleOuputSystem.h"
 #include "nCursesOutput.h"
+#include <boost/program_options.hpp> 
 #include <exception>  
 
 
 using namespace std;
+
+
+/*int main(int argc, char *argv[])
+{
+
+
+	int opt;
+	namespace po = boost::program_options;
+	po::options_description desc("Allowed options");
+	desc.add_options()
+		("ui,I", po::value<std::string>(), "Input interface");
+*/
+
 
 int main(int argc, char *argv[])
 {
@@ -15,10 +29,6 @@ int main(int argc, char *argv[])
 	}
 
 	string mode(argv[1]);
-
-try
-{
-
 	if (mode == "-ui=console")
 	{
 		ConsoleOuputSystem* A = new ConsoleOuputSystem[1];
@@ -31,11 +41,7 @@ try
 		A->run();
 		delete[] A;
 	}		
-}
-catch (std::exception& UnknownKey)
-{
-	cout << "Error key! " << endl;
-};
+
 	
 	return 0;
 }

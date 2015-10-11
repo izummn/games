@@ -26,7 +26,7 @@ public:
 		temp = arr;
 	}
 
-	int getPsize() const { return pSize; }
+	
 
 	Logic(const Logic &obj) :pSize(3)
 	{
@@ -35,16 +35,12 @@ public:
 	}
 
 	~Logic() {};
-
-	int getArr(int v_i) const
-	{
-		return arr[v_i];
-	}
-
-	int getArr(int v_i, int v_j) const
-	{
-		return arr[v_i*pSize + v_j];
-	}
+	
+	int getPsize() const { return pSize; }
+	int getArr(int v_i) const   { return arr[v_i]; }
+	int getArr(int v_i, int v_j) const  {  return arr[v_i*pSize + v_j]; }
+	void setArr(int v_i, int v_j, int value)  { arr[v_i*pSize + v_j] = value; }
+	void setArr(int v_i, int value)   {  arr[v_i] = value; }
 
 	void setValue(const action v_action)
 	{
@@ -132,10 +128,8 @@ public:
 		temp = arr;
 	}
 
-	void resetPuzzle()
-	{
-		arr = temp;
-	}
+	void resetPuzzle() { arr = temp; }
+	void saveTempPuzzle() { temp = arr; }
 	
 };
 

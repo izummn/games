@@ -1,10 +1,12 @@
+#pragma once
 #include <iostream>
 #include "logic.h"
 #include <conio.h>
+#include "Saver.h"
 
 using namespace std;
 
-class ConsoleOuputSystem
+class ConsoleOuputSystem : private Saver
 {
 private:
 	Logic lgc;
@@ -20,6 +22,8 @@ public:
 		cout << " To start game press <n> key. " << endl;
 		cout << " To exit from game press <q> key. " << endl;
 		cout << " To restart game press <r> key. " << endl;
+		cout << " To save game press <p> key. " << endl;
+		cout << " To open game press <o> key. " << endl;
 		cin >> input;
 
 		while (checkInput(input))
@@ -42,18 +46,39 @@ public:
 		system("cls");
 		switch (p)
 		{
-		case 'w':   { lgc.setValue(MOVE_UP); return true; }  break;
-		case 's':   { lgc.setValue(MOVE_DOWN); return true; }  break;
-		case 'a':   { lgc.setValue(MOVE_LEFT); return true; }  break;
-		case 'd':   { lgc.setValue(MOVE_RIGHT); return true; } break;
-		case 'n':   { lgc.newGame(); return true; } break;
-		case 'r':   { lgc.resetPuzzle(); return true; }  break;
-		case 'q':	return false; break;
+		case 'w':    lgc.setValue(MOVE_UP);		 break;
+		case 's':    lgc.setValue(MOVE_DOWN);    break;
+		case 'a':    lgc.setValue(MOVE_LEFT);    break;
+		case 'd':    lgc.setValue(MOVE_RIGHT);   break;
+		case 'n':    lgc.newGame();				 break;
+		case 'r':    lgc.resetPuzzle();			 break;
+		case 'p':    saveMenu();				 break;
+		case 'o':    readMenu();				 break;
+		case 'q':	 return false; 
+		default:	 cout << " Error! Try again! " << endl; break;
 		}
-		cout << " Error! Try again! " << endl;
 		return true; 
 	}
 
+	void saveMenu()
+	{
+		cout << " Save to file: " << endl;
+		string s;
+		cin >> s;
+		Saver* B = new Saver(s);
+		B->saveToFile(lgc);
+		cout << " Success! Saved to file: " << s << endl;
+	}
+
+	void readMenu()
+	{
+		cout << " Load from file: " << endl;
+		string s;
+		cin >> s;
+		Saver* B = new Saver(s);
+		B->readFile(lgc);
+		
+	}
 
 	friend ostream& operator<<(ostream &os, ConsoleOuputSystem &obj)
 	{

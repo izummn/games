@@ -12,11 +12,19 @@ private:
 	Saver svr;
 
 public:
-	nCursesOutput()
+	nCursesOutput() :svr("fifteen_puzzle.txt")
 	{ 
 		initscr(); 
 		keypad(stdscr, true);
 	}
+
+	nCursesOutput(const string v_s) :svr(v_s)
+	{
+		initscr();
+		keypad(stdscr, true);
+	}
+
+
 	~nCursesOutput()
 	{
 		endwin(); 
@@ -86,7 +94,7 @@ public:
 		char* s = new char[100];
 		printw(" Enter file name: ");
 		scanw("%99s", s);
-		//svr(s1);
+		svr.setFileName(s);
 		svr.saveToFile(lgc);
 	}
 
@@ -95,7 +103,7 @@ public:
 		char* s = new char[100];
 		printw(" Enter file name: ");
 		scanw("%99s", s);
-		//svr(s1);
+		svr.setFileName(s);
 		svr.readFile(lgc);
 	}
 

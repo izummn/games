@@ -10,8 +10,11 @@ private:
 	std::string fileName;
 
 public:
-	Saver() : fileName("test") {}
+	Saver() : fileName("fifteen_puzzle.txt") {}
 	Saver(std::string v_fileName) : fileName(v_fileName) {}
+
+	void setFileName(const string v_s){	 fileName = v_s; }
+	string getFileName() const { return fileName; }
 
 	void saveToFile(const Logic& lgc)
 	{

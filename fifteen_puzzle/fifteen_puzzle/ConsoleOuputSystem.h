@@ -13,6 +13,7 @@ private:
 
 public:
 	ConsoleOuputSystem(){}
+	ConsoleOuputSystem(const string v_s):Saver(v_s){}
 	~ConsoleOuputSystem(){}
 
 	void run()
@@ -65,9 +66,9 @@ public:
 		cout << " Save to file: " << endl;
 		string s;
 		cin >> s;
-		Saver* B = new Saver(s);
-		B->saveToFile(lgc);
-		cout << " Success! Saved to file: " << s << endl;
+		setFileName(s);
+		saveToFile(lgc);
+		cout << " Success! Saved to file: " << getFileName() << endl;
 	}
 
 	void readMenu()
@@ -75,8 +76,8 @@ public:
 		cout << " Load from file: " << endl;
 		string s;
 		cin >> s;
-		Saver* B = new Saver(s);
-		B->readFile(lgc);
+		setFileName(s); 
+		readFile(lgc);
 		
 	}
 

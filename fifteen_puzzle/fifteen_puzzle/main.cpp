@@ -7,9 +7,7 @@
 
 using namespace std;
 
-
 int main(int argc, char *argv[])
-//int main()
 {
 
 /*if (argc < 2)
@@ -26,17 +24,21 @@ int main(int argc, char *argv[])
 
 		po::variables_map vm;
 		ifstream p("file.ini");
-
+		
 		store(parse_config_file(p, desc), vm);
 		store(parse_command_line(argc, argv, desc), vm);
+		
 		notify(vm);
 
-		string s = vm["fN"].as<string>();
 		if (vm.count("help"))
 		{
 			cout << desc << "\n";
 			return 1;
 		}
+
+		string s("fifteen_puzzle.txt");
+		if (vm.count("fN"))
+			 s = vm["fN"].as<string>();
 
 		if (vm["uI"].as<string>() == "console")
 		{
@@ -51,7 +53,6 @@ int main(int argc, char *argv[])
 			A->run();
 			delete A;
 		}
-
 
 	return 0;
 }

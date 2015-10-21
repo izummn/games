@@ -13,7 +13,7 @@ private:
 
 public:
 	ConsoleOuputSystem(){}
-	ConsoleOuputSystem(const string v_s):Saver(v_s){}
+	ConsoleOuputSystem(const string& v_s):Saver(v_s){}
 	~ConsoleOuputSystem(){}
 
 	void run()
@@ -66,7 +66,7 @@ public:
 		cout << " Save to file: " << endl;
 		string s;
 		cin >> s;
-		setFileName(s);
+		if (s != "") setFileName(s);
 		saveToFile(lgc);
 		cout << " Success! Saved to file: " << getFileName() << endl;
 	}
@@ -78,7 +78,7 @@ public:
 		cin >> s;
 		setFileName(s); 
 		readFile(lgc);
-		
+		if (!readFile(lgc)) cout << " File not found! Try again! " << endl;
 	}
 
 	friend ostream& operator<<(ostream &os, ConsoleOuputSystem &obj)

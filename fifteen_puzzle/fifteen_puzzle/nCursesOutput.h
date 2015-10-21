@@ -3,6 +3,7 @@
 #include "curses.h"
 #include <string>
 
+
 using namespace std;
 
 class nCursesOutput
@@ -12,13 +13,13 @@ private:
 	Saver svr;
 
 public:
-	nCursesOutput() :svr("fifteen_puzzle.txt")
+	nCursesOutput() :svr()
 	{ 
 		initscr(); 
 		keypad(stdscr, true);
 	}
 
-	nCursesOutput(const string v_s) :svr(v_s)
+	nCursesOutput(const string& v_s) :svr(v_s)
 	{
 		initscr();
 		keypad(stdscr, true);
@@ -92,10 +93,12 @@ public:
 	void saveMenu()
 	{
 		char* s = new char[100];
+		s[0] = '\0';
 		printw(" Enter file name: ");
 		scanw("%99s", s);
-		svr.setFileName(s);
+		if (s[0] != '\0') svr.setFileName(s);
 		svr.saveToFile(lgc);
+		printw(" Saved to file: %s", svr.getFileName().c_str());
 	}
 
 	void readMenu()
@@ -104,10 +107,8 @@ public:
 		printw(" Enter file name: ");
 		scanw("%99s", s);
 		svr.setFileName(s);
-		svr.readFile(lgc);
+		if (!svr.readFile(lgc)) printw(" File not found, try again! ");
 	}
-
-
 };
 
 

@@ -5,7 +5,6 @@
 
 using namespace boost::property_tree;
 
-
 class Saver
 {
 private:

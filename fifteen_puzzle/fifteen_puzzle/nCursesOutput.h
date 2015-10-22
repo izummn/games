@@ -2,11 +2,12 @@
 #include "logic.h"
 #include "curses.h"
 #include <string>
+#include "IOutputSystem.h"
 
 
 using namespace std;
 
-class nCursesOutput
+class nCursesOutput : public IOutputSystem
 {
 private:
 	Logic lgc;
@@ -33,7 +34,7 @@ public:
 
 	Logic getLgc() const { return lgc; }
 
-	void run()
+	virtual void run()
 	{	
 		printw(" ***** Fifteen puzzle ***** \n");
 		printw(" To start game press <n> key. \n");
@@ -52,8 +53,7 @@ public:
 				printw(" To exit from game press <q> key. \n");
 				refresh();
 			}
-			else
-			show();	
+			else  show();	
 		}
 		
 	}
@@ -99,6 +99,7 @@ public:
 		if (s[0] != '\0') svr.setFileName(s);
 		svr.saveToFile(lgc);
 		printw(" Saved to file: %s", svr.getFileName().c_str());
+		delete[] s;
 	}
 
 	void readMenu()
@@ -108,6 +109,7 @@ public:
 		scanw("%99s", s);
 		svr.setFileName(s);
 		if (!svr.readFile(lgc)) printw(" File not found, try again! ");
+		delete [] s;
 	}
 };
 

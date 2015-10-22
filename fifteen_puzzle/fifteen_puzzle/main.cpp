@@ -3,18 +3,15 @@
 #include "nCursesOutput.h"
 #include <boost/program_options.hpp> 
 #include <exception>  
+#include "IOutputSystem.h"
 
 
 using namespace std;
 
+
+
 int main(int argc, char *argv[])
 {
-
-/*if (argc < 2)
-	{
-		std::cout << "Enter mode!" << std::endl;
-		exit(1);
-	}*/
 		namespace po = boost::program_options;
 		po::options_description desc("Allowed options");
 		desc.add_options()
@@ -24,11 +21,12 @@ int main(int argc, char *argv[])
 
 		po::variables_map vm;
 		ifstream p("file.ini");
-		
-		store(parse_config_file(p, desc), vm);
-		store(parse_command_line(argc, argv, desc), vm);
-		
+
+		if (argc < 2)  store(parse_config_file(p, desc), vm);
+		else store(parse_command_line(argc, argv, desc), vm);
+
 		notify(vm);
+		string s("fifteen_puzzle.txt");
 
 		if (vm.count("help"))
 		{
@@ -36,23 +34,22 @@ int main(int argc, char *argv[])
 			return 1;
 		}
 
-		string s("fifteen_puzzle.txt");
-		if (vm.count("fN"))
+		 if (vm.count("fN"))
 			 s = vm["fN"].as<string>();
 
-		if (vm["uI"].as<string>() == "console")
-		{
-			ConsoleOuputSystem* A = new ConsoleOuputSystem(s);
-			A->run();
-			delete A;
-		}
-
-		if (vm["uI"].as<string>() == "nCurses")
-		{
-			nCursesOutput* A = new nCursesOutput(s);
-			A->run();
-			delete A;
-		}
+		 IOutputSystem* outputSystem = NULL;
+		 if (vm["uI"].as<string>() == "console")
+			 outputSystem = new ConsoleOuputSystem(s);
+		 else if (vm["uI"].as<string>() == "nCurses")
+			 outputSystem = new nCursesOutput(s);
+		 else
+		 {
+			 cout << "wrong output system" << endl;
+			 delete outputSystem;
+			 return 0;
+		 }
+		 outputSystem->run();
+		 delete outputSystem;
 
 	return 0;
 }

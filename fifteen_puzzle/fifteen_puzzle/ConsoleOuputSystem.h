@@ -3,10 +3,11 @@
 #include "logic.h"
 #include <conio.h>
 #include "Saver.h"
+#include "IOutputSystem.h"
 
 using namespace std;
 
-class ConsoleOuputSystem : private Saver
+class ConsoleOuputSystem : public IOutputSystem, private Saver
 {
 private:
 	Logic lgc;
@@ -14,9 +15,9 @@ private:
 public:
 	ConsoleOuputSystem(){}
 	ConsoleOuputSystem(const string& v_s):Saver(v_s){}
-	~ConsoleOuputSystem(){}
+    ~ConsoleOuputSystem(){}
 
-	void run()
+	virtual void run()
 	{
 		char input;
 		cout << " ***** Fifteen puzzle ***** " << endl;

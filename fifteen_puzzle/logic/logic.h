@@ -19,7 +19,7 @@ private:
 	std::vector<int> temp;
 
 public:
-	Logic() :pSize(3), arr(pSize*pSize), temp(pSize*pSize)
+	Logic() :pSize(4), arr(pSize*pSize), temp(pSize*pSize)
 	{
 		iota(arr.begin(), arr.end(), 1);
 		arr[pSize*pSize-1]= 0;
@@ -28,7 +28,7 @@ public:
 
 	
 
-	Logic(const Logic &obj) :pSize(3)
+	Logic(const Logic &obj) :pSize(4)
 	{
 			arr = obj.arr;
 			temp = obj.temp;

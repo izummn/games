@@ -1,27 +1,31 @@
+#pragma once
 #include <iostream>
 #include "logic.h"
-#include <stdio.h>
-#include <stdlib.h>
 #include <conio.h>
+#include "Saver.h"
+#include "IOutputSystem.h"
 
 using namespace std;
 
-class ConsoleOuputSystem
+class ConsoleOuputSystem : public IOutputSystem, private Saver
 {
 private:
 	Logic lgc;
 
 public:
 	ConsoleOuputSystem(){}
-	~ConsoleOuputSystem(){}
+	ConsoleOuputSystem(const string& v_s):Saver(v_s){}
+    ~ConsoleOuputSystem(){}
 
-	void start()
+	virtual void run()
 	{
 		char input;
 		cout << " ***** Fifteen puzzle ***** " << endl;
 		cout << " To start game press <n> key. " << endl;
 		cout << " To exit from game press <q> key. " << endl;
 		cout << " To restart game press <r> key. " << endl;
+		cout << " To save game press <p> key. " << endl;
+		cout << " To open game press <o> key. " << endl;
 		cin >> input;
 
 		while (checkInput(input))
@@ -29,9 +33,12 @@ public:
 			if (lgc.winCheck())
 			{
 				cout << " You win! " << endl;
-				break;
+				cout << " To start game press <n> key. " << endl;
+				cout << " To exit from game press <q> key. " << endl;
 			}
-			cout << *this << endl;
+			else
+				cout << *this << endl;
+
 			input = _getch();
 		}
 	}
@@ -41,30 +48,50 @@ public:
 		system("cls");
 		switch (p)
 		{
-		case 'w':   { lgc.setValue(MOVE_UP); return true; }  break;
-		case 's':   { lgc.setValue(MOVE_DOWN); return true; }  break;
-		case 'a':   { lgc.setValue(MOVE_LEFT); return true; }  break;
-		case 'd':   { lgc.setValue(MOVE_RIGHT); return true; } break;
-		case 'n':   { lgc.newGame(); return true; } break;
-		case 'r':   { lgc.resetPuzzle(); return true; }  break;
-		case 'q':	return false; break;
+		case 'w':    lgc.setValue(MOVE_UP);		 break;
+		case 's':    lgc.setValue(MOVE_DOWN);    break;
+		case 'a':    lgc.setValue(MOVE_LEFT);    break;
+		case 'd':    lgc.setValue(MOVE_RIGHT);   break;
+		case 'n':    lgc.newGame();				 break;
+		case 'r':    lgc.resetPuzzle();			 break;
+		case 'p':    saveMenu();				 break;
+		case 'o':    readMenu();				 break;
+		case 'q':	 return false; 
+		default:	 cout << " Error! Try again! " << endl; break;
 		}
-		cout << " Error! Try again! " << endl;
 		return true; 
 	}
 
-	
+	void saveMenu()
+	{
+		cout << " Save to file: " << endl;
+		string s;
+		cin >> s;
+		if (s != "") setFileName(s);
+		saveToFile(lgc);
+		cout << " Success! Saved to file: " << getFileName() << endl;
+	}
+
+	void readMenu()
+	{
+		cout << " Load from file: " << endl;
+		string s;
+		cin >> s;
+		setFileName(s); 
+		readFile(lgc);
+		if (!readFile(lgc)) cout << " File not found! Try again! " << endl;
+	}
 
 	friend ostream& operator<<(ostream &os, ConsoleOuputSystem &obj)
 	{
 		
-		for (int i(0); i < pSize; i++)
+		for (int i(0); i < obj.lgc.getPsize(); i++)
 		{
 			os << endl;
-			for (int j(0); j < pSize; j++)
+			for (int j(0); j < obj.lgc.getPsize(); j++)
 			{
 				os.width(4);
-				if (obj.lgc.getArr(i,j) == 0)
+				if (obj.lgc.getArr(i, j) == 0)
 					os << "   ";
 				else
 					os << obj.lgc.getArr(i, j);

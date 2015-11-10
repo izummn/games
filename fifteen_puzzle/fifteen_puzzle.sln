@@ -7,6 +7,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "fifteen_puzzle", "fifteen_p
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "logic", "logic\logic.vcxproj", "{281B7AC6-8999-4847-B4CC-47465AD67733}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "server", "server\server.vcxproj", "{16734A4E-54AB-4D32-8909-2D79B3B4CF9D}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -21,6 +23,10 @@ Global
 		{281B7AC6-8999-4847-B4CC-47465AD67733}.Debug|Win32.Build.0 = Debug|Win32
 		{281B7AC6-8999-4847-B4CC-47465AD67733}.Release|Win32.ActiveCfg = Release|Win32
 		{281B7AC6-8999-4847-B4CC-47465AD67733}.Release|Win32.Build.0 = Release|Win32
+		{16734A4E-54AB-4D32-8909-2D79B3B4CF9D}.Debug|Win32.ActiveCfg = Debug|Win32
+		{16734A4E-54AB-4D32-8909-2D79B3B4CF9D}.Debug|Win32.Build.0 = Debug|Win32
+		{16734A4E-54AB-4D32-8909-2D79B3B4CF9D}.Release|Win32.ActiveCfg = Release|Win32
+		{16734A4E-54AB-4D32-8909-2D79B3B4CF9D}.Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

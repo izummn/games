@@ -1,43 +1,102 @@
 #include <cstdlib>
 #include <iostream>
 #include <boost/bind.hpp>
-#include <boost/smart_ptr.hpp>
 #include <boost/asio.hpp>
-#include <boost/thread/thread.hpp>
+#include <boost/shared_ptr.hpp>
+#include <boost/enable_shared_from_this.hpp>
 
 namespace ba = boost::asio;
-typedef boost::shared_ptr<ba::ip::tcp::socket> socket_ptr;
+const int max = 512;
+ba::io_service service;
 
-void startSession(socket_ptr sock)
+class talk_to_client : public boost::enable_shared_from_this<talk_to_client>, boost::noncopyable
 {
-	try
-	{
-			while (true)
-			{
-				char data[512];
-				sock->read_some(ba::buffer(data));
-				ba::write(*sock, ba::buffer("response: "));
-			}
-	}
-	catch (boost::system::system_error e)
-	{
-		std::cout << " Error! " << std::endl;
-	}
-}
-	
 
+public:
+	typedef boost::system::error_code error_code;
+	typedef boost::shared_ptr<talk_to_client> ptr;
+
+	void start()
+	{
+		started = true;
+		do_read();
+	}
+
+	static ptr get_new_client()
+	{
+		ptr new_client(new talk_to_client);
+		return new_client;
+	}
+
+	void stop()
+	{
+		if (!started) return;
+		started = false;
+		sock.close();
+	}
+
+	ba::ip::tcp::socket & get_sock() { return sock; }
+
+	
+private:
+	ba::ip::tcp::socket sock;
+	char read_buffer[max];
+	char write_buffer[max];
+	bool started;
+
+	typedef talk_to_client self_type;
+	talk_to_client() : sock(service), started(false) {}
+
+	void on_read(const error_code & err, size_t bytes)
+	{
+			std::string msg(read_buffer, bytes);
+			// send message back
+			do_write(" Response from server: " + msg + "\n");
+	}
+
+	void on_write(const error_code & err, size_t bytes)
+	{
+		
+		do_read();
+	}
+
+	void do_read()
+	{
+		
+		ba::async_read(sock, ba::buffer(read_buffer),
+			boost::bind(&self_type::read_complete, shared_from_this(), _1, _2),
+			boost::bind(&self_type::on_read, shared_from_this(), _1, _2));
+	}
+
+	void do_write(const std::string & msg)
+	{
+		std::copy(msg.begin(), msg.end(), write_buffer);
+		sock.async_write_some(ba::buffer(write_buffer, msg.size()),
+			boost::bind(&self_type::on_write, shared_from_this(), _1, _2));
+	}
+
+	size_t read_complete(const boost::system::error_code & err, size_t bytes)
+	{
+		if (err) return 0;
+		bool found = std::find(read_buffer, read_buffer + bytes, '\n') < read_buffer + bytes;
+		// we read one-by-one until we get to enter, no buffering
+		return found ? 0 : 1;
+	}
+
+};
+
+
+ba::ip::tcp::acceptor acceptor(service, ba::ip::tcp::endpoint(ba::ip::tcp::v4(), 8181));
+
+void handle_accept(talk_to_client::ptr client, const boost::system::error_code & err) {
+	client->start();
+	talk_to_client::ptr new_client = talk_to_client::get_new_client();
+	acceptor.async_accept(new_client->get_sock(), boost::bind(handle_accept, new_client, _1));
+}
 
 int main()
 {
-	ba::io_service service;
-	ba::ip::tcp::endpoint ep(ba::ip::tcp::v4(), 100);
-	ba::ip::tcp::acceptor acc(service, ep);
-	while (true)
-	{
-		socket_ptr sock(new ba::ip::tcp::socket(service));
-		acc.accept(*sock);
-		boost::thread(boost::bind(startSession, sock));
-	}
-	return 0;
+	talk_to_client::ptr client = talk_to_client::get_new_client();
+	acceptor.async_accept(client->get_sock(), boost::bind(handle_accept, client, _1));
+	service.run();
 }
-

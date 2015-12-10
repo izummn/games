@@ -2,8 +2,7 @@
 #include <iostream>
 #include <boost/bind.hpp>
 #include <boost/asio.hpp>
-//#include <boost/shared_ptr.hpp>
-//#include <boost/enable_shared_from_this.hpp>
+#include <stdexcept>
 
 namespace ba = boost::asio;
 const int max = 512;
@@ -66,17 +65,28 @@ private:
 	}
 
 	void on_write(const error_code & err, size_t bytes)
-	{	
+	{
 		std::cout << " Server is: on_write " << std::endl;
 		do_read();
 	}
 
 	void do_read()
 	{
-		std::cout << " Server is: do_read " << std::endl;
-		ba::async_read(sock, ba::buffer(read_buffer),
-			boost::bind(&self_type::read_complete, shared_from_this(), _1, _2),
-			boost::bind(&self_type::on_read, shared_from_this(), _1, _2));
+		try
+		{
+
+			ba::async_read(sock, ba::buffer(read_buffer),
+				boost::bind(&self_type::read_complete, shared_from_this(), _1, _2),
+				boost::bind(&self_type::on_read, shared_from_this(), _1, _2));
+		}
+
+		catch (std::invalid_argument& e)
+		{
+				//cerr << e.what() << endl;
+				std::cout << " Server is: throw exception " << std::endl;
+				stop();
+		}
+		
 	}
 
 	void do_write(const std::string & msg)
@@ -90,11 +100,17 @@ private:
 	size_t read_complete(const boost::system::error_code & err, size_t bytes)
 	{
 		std::cout << " Server is: read_complete " << std::endl;
-		if (err) return 0;
-
-		bool found = std::find(read_buffer, read_buffer + bytes, '\n') < read_buffer + bytes;
-		// we read one-by-one until we get to enter, no buffering
-		return found ? 0 : 1;
+		if (err) 
+		{
+			std::cout << " Error: " << err << std::endl;
+			throw std::invalid_argument(" Break session.");
+		}
+		else
+		{
+			bool found = std::find(read_buffer, read_buffer + bytes, '\n') < read_buffer + bytes;
+			// we read one-by-one until we get to enter, no buffering
+			return found ? 0 : 1;
+		}
 	}
 
 };

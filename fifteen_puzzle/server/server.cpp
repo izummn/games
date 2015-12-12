@@ -17,6 +17,7 @@ public:
 
 	void start()
 	{
+		std::cout << " Start session " << std::endl;
 		started = true;
 		do_read();
 	}
@@ -29,6 +30,7 @@ public:
 
 	void stop()
 	{
+		std::cout << " Stop session " << std::endl;
 		if (!started) return;
 		started = false;	
 		sock.close();
@@ -50,7 +52,7 @@ private:
 	{
 		std::cout << " Server is: on_read " << std::endl;
 
-		if (std::find(read_buffer, read_buffer + bytes, '0') < read_buffer + bytes)
+		if ((std::find(read_buffer, read_buffer + bytes, '0') < read_buffer + bytes) || (err))
 		{
 			std::cout << " Server is: exit " << std::endl;
 			stop();
@@ -72,21 +74,10 @@ private:
 
 	void do_read()
 	{
-		try
-		{
-
+		std::cout << " Server is: do_read " << std::endl;
 			ba::async_read(sock, ba::buffer(read_buffer),
 				boost::bind(&self_type::read_complete, shared_from_this(), _1, _2),
 				boost::bind(&self_type::on_read, shared_from_this(), _1, _2));
-		}
-
-		catch (std::invalid_argument& e)
-		{
-				//cerr << e.what() << endl;
-				std::cout << " Server is: throw exception " << std::endl;
-				stop();
-		}
-		
 	}
 
 	void do_write(const std::string & msg)
@@ -100,17 +91,10 @@ private:
 	size_t read_complete(const boost::system::error_code & err, size_t bytes)
 	{
 		std::cout << " Server is: read_complete " << std::endl;
-		if (err) 
-		{
-			std::cout << " Error: " << err << std::endl;
-			throw std::invalid_argument(" Break session.");
-		}
-		else
-		{
-			bool found = std::find(read_buffer, read_buffer + bytes, '\n') < read_buffer + bytes;
-			// we read one-by-one until we get to enter, no buffering
-			return found ? 0 : 1;
-		}
+		if (err) return 0;
+		bool found = std::find(read_buffer, read_buffer + bytes, '\n') < read_buffer + bytes;
+		// we read one-by-one until we get to enter, no buffering
+		return found ? 0 : 1;
 	}
 
 };
